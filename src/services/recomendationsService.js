@@ -27,3 +27,27 @@ export async function downvoteRecomendation({ id, score }) {
     await recomendationsRepository.downvoteRecomendation(id);
   }
 }
+
+function getRandomInt(n) {
+  return Math.floor(Math.random() * n);
+}
+
+export async function getRandomRecomendation() {
+  const recomendations = await recomendationsRepository.getAllRecomendations();
+  if (recomendations.length === 0) {
+    return false;
+  }
+
+  const randomN = Math.random();
+  const aboveTenScore = recomendations.filter((song) => song.score > 10);
+  const belowTenScore = recomendations.filter((song) => song.score <= 10);
+
+  if (randomN < 0.7 && aboveTenScore.length > 0) {
+    return aboveTenScore[getRandomInt(aboveTenScore.length)];
+  }
+  if (randomN >= 0.7 && belowTenScore.length > 0) {
+    return belowTenScore[getRandomInt(belowTenScore.length)];
+  }
+
+  return recomendations[getRandomInt(recomendations.length)];
+}
