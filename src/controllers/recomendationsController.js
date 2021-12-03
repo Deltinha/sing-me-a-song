@@ -42,3 +42,12 @@ export async function getRandomRecomendation(req, res) {
   if (!recomendation) return res.sendStatus(404);
   return res.send(recomendation).status(200);
 }
+
+export async function getTopRecomendations(req, res) {
+  const { amount } = req.params;
+  const recomendations = await recomendationsService.getTopRecomendations(
+    amount
+  );
+  if (!recomendations) return res.sendStatus(404);
+  return res.send(recomendations).status(200);
+}

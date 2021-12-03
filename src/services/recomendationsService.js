@@ -51,3 +51,11 @@ export async function getRandomRecomendation() {
 
   return recomendations[getRandomInt(recomendations.length)];
 }
+
+export async function getTopRecomendations(amount) {
+  const recomendations = await recomendationsRepository.getTopRecomendations(
+    amount
+  );
+  if (!recomendations) return false;
+  return recomendations;
+}

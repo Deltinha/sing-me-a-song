@@ -7,5 +7,6 @@ router.post('', recomendationsController.insertRecomendation);
 router.post('/:id/upvote', recomendationsController.upvoteRecomendation);
 router.post('/:id/downvote', recomendationsController.downvoteRecomendation);
 router.get('/random', recomendationsController.getRandomRecomendation);
+router.get('/top/:amount', recomendationsController.getTopRecomendations);
 
 export default router;
