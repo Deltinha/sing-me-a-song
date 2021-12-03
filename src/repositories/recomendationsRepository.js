@@ -80,3 +80,21 @@ export async function removeRecomendation(id) {
     [id]
   );
 }
+
+export async function getTopRecomendations(amount) {
+  const recomendations = await connection.query(
+    `
+    SELECT
+      *
+    FROM
+      recomendations
+    ORDER BY
+      -score
+    LIMIT
+      $1 
+  `,
+    [amount]
+  );
+
+  return recomendations.rows;
+}
