@@ -41,3 +41,29 @@ export async function upvoteRecomendation(id) {
     [id]
   );
 }
+
+export async function downvoteRecomendation(id) {
+  await connection.query(
+    `
+    UPDATE
+      recomendations
+    SET
+      score = score - 1
+    WHERE
+      id=$1;
+  `,
+    [id]
+  );
+}
+
+export async function removeRecomendation(id) {
+  await connection.query(
+    `
+    DELETE FROM
+      recomendations
+    WHERE
+      id=$1;
+  `,
+    [id]
+  );
+}

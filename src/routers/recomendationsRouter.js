@@ -4,6 +4,7 @@ import * as recomendationsController from '../controllers/recomendationsControll
 const router = new Router();
 
 router.post(recomendationsController.insertRecomendation);
-router.post('/:id/upvote', recomendationsController.upvoteSong);
+router.post('/:id/upvote', recomendationsController.upvoteRecomendation);
+router.post('/:id/downvote', recomendationsController.downvoteRecomendation);
 
 export default router;

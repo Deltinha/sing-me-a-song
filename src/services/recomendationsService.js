@@ -16,5 +16,14 @@ export async function upvoteRecomendation(id) {
 
 export async function recomendationExists(id) {
   const recomendation = await recomendationsRepository.getRecomendationById(id);
-  return !!recomendation;
+  if (!recomendation) return false;
+  return recomendation;
+}
+
+export async function downvoteRecomendation({ id, score }) {
+  if (score === -5) {
+    await recomendationsRepository.removeRecomendation(id);
+  } else {
+    await recomendationsRepository.downvoteRecomendation(id);
+  }
 }
