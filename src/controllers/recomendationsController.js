@@ -36,3 +36,9 @@ export async function downvoteRecomendation(req, res) {
 
   return res.sendStatus(200);
 }
+
+export async function getRandomRecomendation(req, res) {
+  const recomendation = await recomendationsService.getRandomRecomendation();
+  if (!recomendation) return res.sendStatus(404);
+  return res.send(recomendation).status(200);
+}

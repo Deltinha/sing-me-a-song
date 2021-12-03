@@ -12,6 +12,19 @@ export async function insertRecomendation({ name, youtubeLink }) {
   );
 }
 
+export async function getAllRecomendations() {
+  const recomendations = await connection.query(
+    `
+    SELECT
+      *
+    FROM
+      recomendations;
+  `
+  );
+
+  return recomendations.rows;
+}
+
 export async function getRecomendationById(id) {
   const recomendation = await connection.query(
     `
