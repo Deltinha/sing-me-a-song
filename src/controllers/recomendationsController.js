@@ -1,18 +1,24 @@
 import * as recomendationsService from '../services/recomendationsService';
 
-export async function insertRecomendation(req, res) {
+export async function insertRecomendation(req, res, next) {
   const { name, youtubeLink } = req.body;
   if (typeof name !== 'string' || typeof youtubeLink !== 'string') {
-    res.sendStatus(400);
+    return res.send('Entrada inválida').status(400);
   }
 
-  const result = await recomendationsService.insertRecomendation({
-    name,
-    youtubeLink,
-  });
+  try {
+    await recomendationsService.insertRecomendation({
+      name,
+      youtubeLink,
+    });
 
-  if (result) return res.sendStatus(201);
-  return res.sendStatus(400);
+    return res.sendStatus(201);
+  } catch (error) {
+    if (error.name === 'RecomendationError') {
+      return res.status(400).send(error.message);
+    }
+    return next(error);
+  }
 }
 
 export async function upvoteRecomendation(req, res) {

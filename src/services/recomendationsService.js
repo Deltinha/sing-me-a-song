@@ -1,9 +1,10 @@
 import validateRecomendationSyntax from '../validations/recomendationValidation';
 import * as recomendationsRepository from '../repositories/recomendationsRepository';
+import RecomendationError from '../errors/recomendationError';
 
 export async function insertRecomendation({ name, youtubeLink }) {
   if (!validateRecomendationSyntax({ name, youtubeLink })) {
-    return false;
+    throw new RecomendationError('Entrada inválida');
   }
 
   await recomendationsRepository.insertRecomendation({ name, youtubeLink });
