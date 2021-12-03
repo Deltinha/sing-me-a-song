@@ -2,14 +2,12 @@ import './setup';
 import express from 'express';
 import cors from 'cors';
 
-import * as recomendationsController from './controllers/recomendationsController';
+import recomendationsRouter from './routers/recomendationsRouter';
 
 const app = express();
 app.use(cors());
 app.use(express.json());
 
-app.get('/health', (req, res) => res.sendStatus(200));
-
-app.post('/recomendations', recomendationsController.insertRecomendation);
+app.use('/recomendations', recomendationsRouter);
 
 export default app;

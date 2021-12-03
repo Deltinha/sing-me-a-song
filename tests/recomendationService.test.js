@@ -1,10 +1,10 @@
 import * as recomendationsService from '../src/services/recomendationsService';
 import * as recomendationsRepository from '../src/repositories/recomendationsRepository';
-import validateRecomendationSyntax from '../src/schemas/recomendationSchema';
+import validateRecomendationSyntax from '../src/validations/recomendationValidation';
 
-jest.mock('../src/schemas/recomendationSchema');
+jest.mock('../src/validations/recomendationValidation');
 
-describe('recomendations tests', () => {
+describe('insert recomendations tests', () => {
   it('should return true if input is valid and recomendation inserted', async () => {
     validateRecomendationSyntax.mockReturnValueOnce(true);
     jest
@@ -28,3 +28,5 @@ describe('recomendations tests', () => {
     expect(result).toEqual(false);
   });
 });
+
+describe('downvote tests', () => {});
