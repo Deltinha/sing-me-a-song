@@ -1,14 +1,14 @@
 import validateRecomendationSyntax from '../validations/recomendationValidation';
 import * as recomendationsRepository from '../repositories/recomendationsRepository';
-import RecomendationError from '../errors/recomendationError';
+import SyntaxError from '../errors/syntaxError';
+import NotFoundError from '../errors/notFoundError';
 
 export async function insertRecomendation({ name, youtubeLink }) {
   if (!validateRecomendationSyntax({ name, youtubeLink })) {
-    throw new RecomendationError('Entrada inválida');
+    throw new SyntaxError('Entrada inválida');
   }
 
   await recomendationsRepository.insertRecomendation({ name, youtubeLink });
-  return true;
 }
 
 export async function upvoteRecomendation(id) {
@@ -16,9 +16,9 @@ export async function upvoteRecomendation(id) {
 }
 
 export async function recomendationExists(id) {
-  const recomendation = await recomendationsRepository.getRecomendationById(id);
-  if (!recomendation) return false;
-  return recomendation;
+  if (!(await recomendationsRepository.getRecomendationById(id))) {
+    throw new NotFoundError('Essa recomendação não existe');
+  }
 }
 
 export async function downvoteRecomendation({ id, score }) {

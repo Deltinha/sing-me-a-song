@@ -1,12 +1,14 @@
+import SyntaxError from '../errors/syntaxError';
 import * as recomendationsService from '../services/recomendationsService';
 
 export async function insertRecomendation(req, res, next) {
   const { name, youtubeLink } = req.body;
-  if (typeof name !== 'string' || typeof youtubeLink !== 'string') {
-    return res.send('Entrada inválida').status(400);
-  }
 
   try {
+    if (typeof name !== 'string' || typeof youtubeLink !== 'string') {
+      throw new SyntaxError('Entrada inválida');
+    }
+
     await recomendationsService.insertRecomendation({
       name,
       youtubeLink,
@@ -14,23 +16,34 @@ export async function insertRecomendation(req, res, next) {
 
     return res.sendStatus(201);
   } catch (error) {
-    if (error.name === 'RecomendationError') {
+    if (error.name === 'SyntaxError') {
       return res.status(400).send(error.message);
     }
     return next(error);
   }
 }
 
-export async function upvoteRecomendation(req, res) {
+export async function upvoteRecomendation(req, res, next) {
   const { id } = req.params;
-  const recomendationExists = await recomendationsService.recomendationExists(
-    id
-  );
-  if (!recomendationExists) return res.sendStatus(404);
+  try {
+    if (Number.isNaN(Number(id))) {
+      throw new SyntaxError('Identificador inválido');
+    }
 
-  await recomendationsService.upvoteRecomendation(id);
+    await recomendationsService.recomendationExists(id);
 
-  return res.sendStatus(200);
+    await recomendationsService.upvoteRecomendation(id);
+
+    return res.sendStatus(200);
+  } catch (error) {
+    if (error.name === 'SyntaxError') {
+      return res.status(400).send(error.message);
+    }
+    if (error.name === 'NotFoundError') {
+      return res.status(404).send(error.message);
+    }
+    return next(error);
+  }
 }
 
 export async function downvoteRecomendation(req, res) {
