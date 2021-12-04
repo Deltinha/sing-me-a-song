@@ -16,9 +16,12 @@ export async function upvoteRecomendation(id) {
 }
 
 export async function recomendationExists(id) {
-  if (!(await recomendationsRepository.getRecomendationById(id))) {
+  const recomendation = await recomendationsRepository.getRecomendationById(id);
+  if (!recomendation) {
     throw new NotFoundError('Essa recomendação não existe');
   }
+
+  return recomendation;
 }
 
 export async function downvoteRecomendation({ id, score }) {

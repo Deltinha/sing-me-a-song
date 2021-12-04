@@ -26,34 +26,22 @@ export async function insertRecomendation(req, res, next) {
 export async function upvoteRecomendation(req, res, next) {
   const { id } = req.params;
   try {
-    if (Number.isNaN(Number(id))) {
-      throw new SyntaxError('Identificador inválido');
-    }
-
-    await recomendationsService.recomendationExists(id);
-
     await recomendationsService.upvoteRecomendation(id);
 
     return res.sendStatus(200);
   } catch (error) {
-    if (error.name === 'SyntaxError') {
-      return res.status(400).send(error.message);
-    }
-    if (error.name === 'NotFoundError') {
-      return res.status(404).send(error.message);
-    }
     return next(error);
   }
 }
 
-export async function downvoteRecomendation(req, res) {
-  const { id } = req.params;
-  const recomendation = await recomendationsService.recomendationExists(id);
-  if (!recomendation) return res.sendStatus(404);
+export async function downvoteRecomendation(req, res, next) {
+  try {
+    await recomendationsService.downvoteRecomendation(res.locals.recomendation);
 
-  await recomendationsService.downvoteRecomendation(recomendation);
-
-  return res.sendStatus(200);
+    return res.sendStatus(200);
+  } catch (error) {
+    return next(error);
+  }
 }
 
 export async function getRandomRecomendation(req, res) {
