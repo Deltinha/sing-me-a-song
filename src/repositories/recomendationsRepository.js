@@ -89,7 +89,7 @@ export async function getTopRecomendations(amount) {
     FROM
       recomendations
     ORDER BY
-      -score
+      score DESC
     LIMIT
       $1 
   `,

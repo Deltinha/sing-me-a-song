@@ -1,53 +1,74 @@
+import SyntaxError from '../errors/syntaxError';
 import * as recomendationsService from '../services/recomendationsService';
 
-export async function insertRecomendation(req, res) {
+export async function insertRecomendation(req, res, next) {
   const { name, youtubeLink } = req.body;
-  if (typeof name !== 'string' || typeof youtubeLink !== 'string') {
-    res.sendStatus(400);
+
+  try {
+    if (typeof name !== 'string' || typeof youtubeLink !== 'string') {
+      throw new SyntaxError('Entrada inválida');
+    }
+
+    await recomendationsService.insertRecomendation({
+      name,
+      youtubeLink,
+    });
+
+    return res.sendStatus(201);
+  } catch (error) {
+    if (error.name === 'SyntaxError') {
+      return res.status(400).send(error.message);
+    }
+    return next(error);
   }
-
-  const result = await recomendationsService.insertRecomendation({
-    name,
-    youtubeLink,
-  });
-
-  if (result) return res.sendStatus(201);
-  return res.sendStatus(400);
 }
 
-export async function upvoteRecomendation(req, res) {
+export async function upvoteRecomendation(req, res, next) {
   const { id } = req.params;
-  const recomendationExists = await recomendationsService.recomendationExists(
-    id
-  );
-  if (!recomendationExists) return res.sendStatus(404);
+  try {
+    await recomendationsService.upvoteRecomendation(id);
 
-  await recomendationsService.upvoteRecomendation(id);
-
-  return res.sendStatus(200);
+    return res.sendStatus(200);
+  } catch (error) {
+    return next(error);
+  }
 }
 
-export async function downvoteRecomendation(req, res) {
-  const { id } = req.params;
-  const recomendation = await recomendationsService.recomendationExists(id);
-  if (!recomendation) return res.sendStatus(404);
+export async function downvoteRecomendation(req, res, next) {
+  try {
+    await recomendationsService.downvoteRecomendation(res.locals.recomendation);
 
-  await recomendationsService.downvoteRecomendation(recomendation);
-
-  return res.sendStatus(200);
+    return res.sendStatus(200);
+  } catch (error) {
+    return next(error);
+  }
 }
 
-export async function getRandomRecomendation(req, res) {
-  const recomendation = await recomendationsService.getRandomRecomendation();
-  if (!recomendation) return res.sendStatus(404);
-  return res.send(recomendation).status(200);
+export async function getRandomRecomendation(req, res, next) {
+  try {
+    const recomendation = await recomendationsService.getRandomRecomendation();
+
+    return res.send(recomendation).status(200);
+  } catch (error) {
+    if (error.name === 'NotFoundError') {
+      return res.status(404).send(error.message);
+    }
+    return next(error);
+  }
 }
 
-export async function getTopRecomendations(req, res) {
+export async function getTopRecomendations(req, res, next) {
   const { amount } = req.params;
-  const recomendations = await recomendationsService.getTopRecomendations(
-    amount
-  );
-  if (!recomendations) return res.sendStatus(404);
-  return res.send(recomendations).status(200);
+  try {
+    const recomendations = await recomendationsService.getTopRecomendations(
+      amount
+    );
+
+    return res.send(recomendations).status(200);
+  } catch (error) {
+    if (error.name === 'NotFoundError') {
+      return res.status(404).send(error.message);
+    }
+    return next(error);
+  }
 }

@@ -1,13 +1,14 @@
 import validateRecomendationSyntax from '../validations/recomendationValidation';
 import * as recomendationsRepository from '../repositories/recomendationsRepository';
+import SyntaxError from '../errors/syntaxError';
+import NotFoundError from '../errors/notFoundError';
 
 export async function insertRecomendation({ name, youtubeLink }) {
   if (!validateRecomendationSyntax({ name, youtubeLink })) {
-    return false;
+    throw new SyntaxError('Entrada inválida');
   }
 
   await recomendationsRepository.insertRecomendation({ name, youtubeLink });
-  return true;
 }
 
 export async function upvoteRecomendation(id) {
@@ -16,7 +17,10 @@ export async function upvoteRecomendation(id) {
 
 export async function recomendationExists(id) {
   const recomendation = await recomendationsRepository.getRecomendationById(id);
-  if (!recomendation) return false;
+  if (!recomendation) {
+    throw new NotFoundError('Essa recomendação não existe');
+  }
+
   return recomendation;
 }
 
@@ -35,7 +39,7 @@ function getRandomInt(n) {
 export async function getRandomRecomendation() {
   const recomendations = await recomendationsRepository.getAllRecomendations();
   if (recomendations.length === 0) {
-    return false;
+    throw new NotFoundError('Não existem recomedações');
   }
 
   const randomN = Math.random();
@@ -56,6 +60,9 @@ export async function getTopRecomendations(amount) {
   const recomendations = await recomendationsRepository.getTopRecomendations(
     amount
   );
-  if (!recomendations) return false;
+  if (!recomendations) {
+    throw new NotFoundError('Não existem recomendações');
+  }
+
   return recomendations;
 }
