@@ -39,7 +39,7 @@ function getRandomInt(n) {
 export async function getRandomRecomendation() {
   const recomendations = await recomendationsRepository.getAllRecomendations();
   if (recomendations.length === 0) {
-    return false;
+    throw new NotFoundError('Não existem recomedações');
   }
 
   const randomN = Math.random();

@@ -44,10 +44,17 @@ export async function downvoteRecomendation(req, res, next) {
   }
 }
 
-export async function getRandomRecomendation(req, res) {
-  const recomendation = await recomendationsService.getRandomRecomendation();
-  if (!recomendation) return res.sendStatus(404);
-  return res.send(recomendation).status(200);
+export async function getRandomRecomendation(req, res, next) {
+  try {
+    const recomendation = await recomendationsService.getRandomRecomendation();
+
+    return res.send(recomendation).status(200);
+  } catch (error) {
+    if (error.name === 'NotFoundError') {
+      return res.status(404).send(error.message);
+    }
+    return next(error);
+  }
 }
 
 export async function getTopRecomendations(req, res) {
