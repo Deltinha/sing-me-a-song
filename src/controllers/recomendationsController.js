@@ -57,11 +57,18 @@ export async function getRandomRecomendation(req, res, next) {
   }
 }
 
-export async function getTopRecomendations(req, res) {
+export async function getTopRecomendations(req, res, next) {
   const { amount } = req.params;
-  const recomendations = await recomendationsService.getTopRecomendations(
-    amount
-  );
-  if (!recomendations) return res.sendStatus(404);
-  return res.send(recomendations).status(200);
+  try {
+    const recomendations = await recomendationsService.getTopRecomendations(
+      amount
+    );
+
+    return res.send(recomendations).status(200);
+  } catch (error) {
+    if (error.name === 'NotFoundError') {
+      return res.status(404).send(error.message);
+    }
+    return next(error);
+  }
 }
