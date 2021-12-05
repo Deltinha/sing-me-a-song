@@ -1,13 +1,9 @@
-import SyntaxError from '../errors/syntaxError';
-
 import * as recomendationsService from '../services/recomendationsService';
 
 export default async function idValidation(req, res, next) {
   const { id } = req.params;
   try {
-    if (Number.isNaN(Number(id))) {
-      throw new SyntaxError('Identificador inválido');
-    }
+    recomendationsService.idTypeValidation(id);
 
     const recomendation = await recomendationsService.recomendationExists(id);
     res.locals.recomendation = recomendation;
