@@ -1,7 +1,7 @@
 import SyntaxError from '../errors/syntaxError';
-import * as recomendationsService from '../services/recomendationsService';
+import * as recommendationsService from '../services/recommendationsService';
 
-export async function insertRecomendation(req, res, next) {
+export async function insertRecommendation(req, res, next) {
   const { name, youtubeLink } = req.body;
 
   try {
@@ -9,7 +9,7 @@ export async function insertRecomendation(req, res, next) {
       throw new SyntaxError('Entrada inválida');
     }
 
-    await recomendationsService.insertRecomendation({
+    await recommendationsService.insertRecommendation({
       name,
       youtubeLink,
     });
@@ -23,10 +23,10 @@ export async function insertRecomendation(req, res, next) {
   }
 }
 
-export async function upvoteRecomendation(req, res, next) {
+export async function upvoteRecommendation(req, res, next) {
   const { id } = req.params;
   try {
-    await recomendationsService.upvoteRecomendation(id);
+    await recommendationsService.upvoteRecommendation(id);
 
     return res.sendStatus(200);
   } catch (error) {
@@ -34,9 +34,11 @@ export async function upvoteRecomendation(req, res, next) {
   }
 }
 
-export async function downvoteRecomendation(req, res, next) {
+export async function downvoteRecommendation(req, res, next) {
   try {
-    await recomendationsService.downvoteRecomendation(res.locals.recomendation);
+    await recommendationsService.downvoteRecommendation(
+      res.locals.recommendation
+    );
 
     return res.sendStatus(200);
   } catch (error) {
@@ -44,11 +46,12 @@ export async function downvoteRecomendation(req, res, next) {
   }
 }
 
-export async function getRandomRecomendation(req, res, next) {
+export async function getRandomRecommendation(req, res, next) {
   try {
-    const recomendation = await recomendationsService.getRandomRecomendation();
+    const recommendation =
+      await recommendationsService.getRandomRecommendation();
 
-    return res.send(recomendation).status(200);
+    return res.send(recommendation).status(200);
   } catch (error) {
     if (error.name === 'NotFoundError') {
       return res.status(404).send(error.message);
@@ -57,14 +60,14 @@ export async function getRandomRecomendation(req, res, next) {
   }
 }
 
-export async function getTopRecomendations(req, res, next) {
+export async function getTopRecommendations(req, res, next) {
   const { amount } = req.params;
   try {
-    const recomendations = await recomendationsService.getTopRecomendations(
+    const recommendations = await recommendationsService.getTopRecommendations(
       amount
     );
 
-    return res.send(recomendations).status(200);
+    return res.send(recommendations).status(200);
   } catch (error) {
     if (error.name === 'NotFoundError') {
       return res.status(404).send(error.message);

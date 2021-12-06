@@ -1,6 +1,6 @@
 import Joi from 'joi';
 
-export default function validateRecomendationSyntax(obj) {
+export default function validateRecommendationSyntax(obj) {
   const ytLinkPattern =
     /^((?:https?:)?\/\/)?((?:www|m)\.)?((?:youtube\.com|youtu.be))(\/(?:[\w\-]+\?v=|embed\/|v\/)?)([\w\-]+)(\S+)?$/;
 
