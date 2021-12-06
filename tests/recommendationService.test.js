@@ -95,7 +95,7 @@ describe('vote related tests', () => {
 });
 
 describe('get random recommendation tests', () => {
-  it('should throw NotFoundError if there aren`t any recommendations', async () => {
+  it('should throw NotFoundError if no recommendation exists', async () => {
     jest
       .spyOn(recommendationsRepository, 'getAllRecommendations')
       .mockReturnValueOnce([]);
@@ -139,5 +139,24 @@ describe('get random recommendation tests', () => {
     jest.spyOn(Math, 'random').mockReturnValueOnce(0.7);
     const result = await recommendationsService.getRandomRecommendation();
     expect(result).toEqual({ score: 2 });
+  });
+});
+
+describe('get top recommendations tests', () => {
+  it('should throw NotFoundError if no recommendation exists', async () => {
+    jest
+      .spyOn(recommendationsRepository, 'getTopRecommendations')
+      .mockReturnValueOnce([]);
+    const promise = recommendationsService.getTopRecommendations();
+    await expect(promise).rejects.toThrow(NotFoundError);
+  });
+
+  it('should return the requested recommendations', async () => {
+    const recomm = ['first', 'second', 'third'];
+    jest
+      .spyOn(recommendationsRepository, 'getTopRecommendations')
+      .mockReturnValueOnce(recomm);
+    const result = await recommendationsService.getTopRecommendations();
+    expect(result).toEqual(recomm);
   });
 });

@@ -70,7 +70,7 @@ export async function getTopRecommendations(amount) {
   const recommendations = await recommendationsRepository.getTopRecommendations(
     amount
   );
-  if (!recommendations) {
+  if (recommendations.length === 0) {
     throw new NotFoundError('Não existem recomendações');
   }
 
